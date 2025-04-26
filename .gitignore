@@ -1,4 +1,15 @@
-.idea
+# Gradle 관련 파일 및 디렉토리
+/build/
+.gradle/
+gradle/wrapper/gradle-wrapper.jar
+gradle/wrapper/gradle-wrapper.properties
+
+# IntelliJ IDEA 관련 파일
+.idea/
+.gradle/caches/
+.gradle/wrapper/dists/
+
+
 *.iml
 *.pyc
 __pycache__/
@@ -6,3 +17,6 @@ __pycache__/
 build/
 dist/
 *.egg-info/
+
+# properties
+application.yml
