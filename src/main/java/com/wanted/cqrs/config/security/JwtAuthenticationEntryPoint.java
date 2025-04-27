@@ -1,0 +1,22 @@
+package com.wanted.cqrs.config.security;
+
+import com.wanted.cqrs.common.response.ApiErrorEnum;
+import com.wanted.cqrs.common.response.ResponseUtils;
+import com.wanted.cqrs.common.utils.Mappers;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+
+@Component
+public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        ResponseUtils.printErrorResponse(response, ApiErrorEnum.UNAUTHORIZED);
+    }
+}
