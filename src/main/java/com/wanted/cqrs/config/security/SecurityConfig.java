@@ -22,7 +22,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-//public class SecurityConfig extends WebSecurityConfiguration {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
@@ -39,6 +38,18 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorizeRequests -> {
             authorizeRequests.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                     .requestMatchers("/api/auth/login").permitAll()
+                    .requestMatchers(
+                            "/api-docs/**",
+                            "/v3/api-docs/**",
+                            "/v3/api-docs/swagger-config/**",
+                            "/swagger-ui.html",
+                            "/swagger-resources",
+                            "/swagger-resources/**",
+//                            "/configuration/ui",
+//                            "/configuration/security",
+//                            "/webjars/**",
+                            "/swagger-ui/**"
+                    ).permitAll()
                     .anyRequest().permitAll();
         });
 

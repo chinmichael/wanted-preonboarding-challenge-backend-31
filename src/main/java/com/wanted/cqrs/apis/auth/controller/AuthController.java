@@ -4,6 +4,8 @@ import com.wanted.cqrs.apis.auth.domain.RequestLoginDto;
 import com.wanted.cqrs.apis.auth.service.AuthService;
 import com.wanted.cqrs.common.response.ApiErrorEnum;
 import com.wanted.cqrs.common.response.ResponseUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@Tag(name = "인증 API", description = "기본 토큰 발급 관련 (최소사양)")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ import java.util.Map;
 public class AuthController {
     private final AuthService authService;
 
+    @Operation(summary = "로그인 (JWT Access Token 발급)", description = "기본 사양에 맞춰 이메일만 입력")
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody RequestLoginDto request) {
         String token = authService.login(request.getEmail(), request.getPassword());

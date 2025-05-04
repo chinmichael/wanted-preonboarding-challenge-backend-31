@@ -29,7 +29,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthService authService;
 
     public static final List<String> PERMIT_URLS = Collections.unmodifiableList(Arrays.asList(
-            "/api/auth/login"
+            "/api/auth/login",
+            "/swagger-ui",
+            "/v3/api-docs",
+            "/api-docs"
     ));
 
     public static final String AUTHORIZATION_HEADER = "Authorization";

@@ -19,4 +19,5 @@ dist/
 *.egg-info/
 
 # properties
-application.yml
+# 챌린지 참여를 위해 github 공유
+# application.yml

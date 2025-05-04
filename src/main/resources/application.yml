@@ -1,0 +1,45 @@
+server:
+  port: 8080
+  error:
+    whitelabel:
+      enabled: false
+
+
+com:
+  wanted:
+    cqrs:
+      jwt:
+        # test 24시간 60 * 60 * 1000
+        access-expire-milli: 86400000
+        # test 3일 3 * 24 * 60 * 60 * 1000
+        refresh-expire-milli: 259200000
+        secret-key: "testSecreteKeyW3e4r5tt67yy126sdhds7i128hd7q621"
+
+logging:
+  level:
+    com:
+      wanted:
+        cqrs: debug
+
+spring:
+  application:
+    name: cqrs
+  profiles:
+    default: dev
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: 'cqrs_dev'
+    password: '!q2w3e4r'
+    hikari:
+      pool-name: Hikari
+      maximum-pool-size: 4
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    jdbc-type-for-null: varchar
+  mapper-locations: classpath:/database/mappers/**/*Mapper.xml
+  type-aliases-package: com.wanted.cqrs.apis
