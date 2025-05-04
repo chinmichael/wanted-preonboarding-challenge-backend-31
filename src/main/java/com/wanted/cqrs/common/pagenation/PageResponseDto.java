@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 @Getter
 public class PageResponseDto<T> {
@@ -20,6 +21,10 @@ public class PageResponseDto<T> {
                 .totalItems(total)
                 .totalPages((long)Math.ceil((total * 1.0) / pageRequest.getPerPage()))
                 .build();
+    }
+
+    public PageResponseDto(List<T> items, PageRequest pageRequest, Supplier<Long> totalSupplier) {
+        this(items, pageRequest, totalSupplier.get());
     }
 
     @Getter

@@ -3,8 +3,6 @@ server:
   error:
     whitelabel:
       enabled: false
-
-
 com:
   wanted:
     cqrs:
@@ -15,11 +13,19 @@ com:
         refresh-expire-milli: 259200000
         secret-key: "testSecreteKeyW3e4r5tt67yy126sdhds7i128hd7q621"
 
+# logback-spring config 함께 확인
 logging:
+  # 자동 설정 사용
+  # config: classpath:logback-spring-dev.xml
   level:
-    com:
-      wanted:
-        cqrs: debug
+    com.wanted.cqrs: debug
+    org.springframework.web.client: trace
+  file:
+    name: ./logs/application-logging.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30
 
 spring:
   application:

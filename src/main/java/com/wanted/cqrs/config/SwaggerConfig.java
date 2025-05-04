@@ -62,7 +62,7 @@ public class SwaggerConfig {
     public GroupedOpenApi productApiGroup() {
         return GroupedOpenApi.builder()
                 .group("product")
-                .pathsToMatch("/api/product/**")
+                .pathsToMatch("/api/products/**")
                 .addOpenApiCustomizer(openApi ->
                         openApi.setInfo(new Info()
                                 .title("상품 관리 API")
@@ -77,7 +77,7 @@ public class SwaggerConfig {
     public GroupedOpenApi categoryApiGroup() {
         return GroupedOpenApi.builder()
                 .group("category")
-                .pathsToMatch("/api/category/**")
+                .pathsToMatch("/api/categories/**")
                 .addOpenApiCustomizer(openApi ->
                         openApi.setInfo(new Info()
                                 .title("카테고리 API")
@@ -107,7 +107,7 @@ public class SwaggerConfig {
     public GroupedOpenApi reviewApiGroup() {
         return GroupedOpenApi.builder()
                 .group("review")
-                .pathsToMatch("/api/review/**")
+                .pathsToMatch("/api/reviews/**")
                 .addOpenApiCustomizer(openApi ->
                         openApi.setInfo(new Info()
                                 .title("리뷰 API")

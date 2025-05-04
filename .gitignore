@@ -9,7 +9,6 @@ gradle/wrapper/gradle-wrapper.properties
 .gradle/caches/
 .gradle/wrapper/dists/
 
-
 *.iml
 *.pyc
 __pycache__/
@@ -21,3 +20,5 @@ dist/
 # properties
 # 챌린지 참여를 위해 github 공유
 # application.yml
+
+/logs

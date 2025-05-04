@@ -67,6 +67,18 @@ public class ResponseUtils {
         return ResponseEntity.ok(ResponseUtils.ok(data, message));
     }
 
+    public static <T, E>ResponseEntity<ApiResponseDto<T, E>> create() {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseUtils.ok());
+    }
+
+    public static <T, E>ResponseEntity<ApiResponseDto<T, E>> create(T data) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseUtils.ok(data));
+    }
+
+    public static <T, E>ResponseEntity<ApiResponseDto<T, E>> create(T data, String message) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseUtils.ok(data, message));
+    }
+
     /*
 
      */

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property resource="logback-variables.properties" />
+    <timestamp key="ToDay" datePattern="yyyyMMdd" />
+
+    <!-- 로그 출력 설정 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${log.console.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!--로그 파일 rolling 설정 (일자, 크기별 파일 저장 설정) -->
+    <appender name="DAILY_ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 기본 로그 파일명 설정 -->
+        <file>${log.file.path}/${log.file.name}</file>
+
+        <!-- 로그 파일 로깅 패턴 설정 -->
+        <encoder>
+            <pattern>${log.logging.pattern}</pattern>
+        </encoder>
+
+        <!-- 로그 파일을 일자, 크기 별로 생성 설정 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.file.path}/${log.file.name}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 로그를 남길 대상 및 로그 레벨 설정 -->
+<!--    <root level="DEBUG">-->
+<!--        <appender-ref ref="DAILY_ROLLING_FILE"/>-->
+<!--        <appender-ref ref="CONSOLE"/>-->
+<!--    </root>-->
+    <logger name="com.wanted.cqrs" level="${}">
+        <appender-ref ref="DAILY_ROLLING_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="org.springframework.web.client" level="TRACE">
+        <appender-ref ref="DAILY_ROLLING_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+</configuration>
