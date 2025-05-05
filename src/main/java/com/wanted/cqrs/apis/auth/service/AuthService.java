@@ -1,8 +1,7 @@
 package com.wanted.cqrs.apis.auth.service;
 
 import com.wanted.cqrs.apis.auth.domain.User;
-import com.wanted.cqrs.apis.auth.domain.UserWithRoleDto;
-import com.wanted.cqrs.common.auth.TokenDto;
+import com.wanted.cqrs.apis.auth.domain.dto.UserWithRoleDto;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public interface AuthService {

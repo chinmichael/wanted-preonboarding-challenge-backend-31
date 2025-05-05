@@ -1,9 +1,9 @@
 package com.wanted.cqrs.config.security;
 
-import com.wanted.cqrs.apis.auth.domain.UserWithRoleDto;
+import com.wanted.cqrs.apis.auth.domain.dto.UserWithRoleDto;
 import com.wanted.cqrs.apis.auth.service.AuthService;
 import com.wanted.cqrs.common.response.ApiErrorEnum;
-import com.wanted.cqrs.common.response.ResponseUtils;
+import com.wanted.cqrs.common.utils.ResponseUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

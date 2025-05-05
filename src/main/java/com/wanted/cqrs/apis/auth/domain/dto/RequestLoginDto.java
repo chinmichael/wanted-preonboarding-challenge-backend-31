@@ -1,4 +1,4 @@
-package com.wanted.cqrs.apis.auth.domain;
+package com.wanted.cqrs.apis.auth.domain.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

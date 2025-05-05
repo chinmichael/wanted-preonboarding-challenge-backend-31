@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class Mappers {
 
     private static final ObjectMapper OBJ_MAPPER = new ObjectMapper()

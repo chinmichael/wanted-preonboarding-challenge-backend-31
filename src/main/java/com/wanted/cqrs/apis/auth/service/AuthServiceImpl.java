@@ -1,20 +1,15 @@
 package com.wanted.cqrs.apis.auth.service;
 
 import com.wanted.cqrs.apis.auth.domain.User;
-import com.wanted.cqrs.apis.auth.domain.UserWithRoleDto;
+import com.wanted.cqrs.apis.auth.domain.dto.UserWithRoleDto;
 import com.wanted.cqrs.apis.auth.repository.AuthRepository;
 import com.wanted.cqrs.common.auth.Roles;
-import com.wanted.cqrs.common.auth.TokenDto;
 import com.wanted.cqrs.config.security.JwtUtils;
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Slf4j
 @Service("AuthService")

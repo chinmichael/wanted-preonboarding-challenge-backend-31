@@ -1,14 +1,18 @@
-package com.wanted.cqrs.common.response;
+package com.wanted.cqrs.common.utils;
 
-import com.wanted.cqrs.common.utils.Mappers;
+import com.wanted.cqrs.common.response.ApiError;
+import com.wanted.cqrs.common.response.ApiErrorEnum;
+import com.wanted.cqrs.common.response.ApiResponseDto;
 import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 
+@UtilityClass
 public class ResponseUtils {
 
     /*

@@ -1,9 +1,9 @@
 package com.wanted.cqrs.apis.auth.controller;
 
-import com.wanted.cqrs.apis.auth.domain.RequestLoginDto;
+import com.wanted.cqrs.apis.auth.domain.dto.RequestLoginDto;
 import com.wanted.cqrs.apis.auth.service.AuthService;
 import com.wanted.cqrs.common.response.ApiErrorEnum;
-import com.wanted.cqrs.common.response.ResponseUtils;
+import com.wanted.cqrs.common.utils.ResponseUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

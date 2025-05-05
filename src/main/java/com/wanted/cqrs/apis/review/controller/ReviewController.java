@@ -1,7 +1,7 @@
 package com.wanted.cqrs.apis.review.controller;
 
 import com.wanted.cqrs.apis.review.service.ReviewService;
-import com.wanted.cqrs.common.response.ResponseUtils;
+import com.wanted.cqrs.common.utils.ResponseUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

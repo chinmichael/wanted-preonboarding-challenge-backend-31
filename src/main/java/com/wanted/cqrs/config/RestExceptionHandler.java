@@ -1,8 +1,7 @@
 package com.wanted.cqrs.config;
 
-import com.wanted.cqrs.common.response.ApiError;
 import com.wanted.cqrs.common.response.ApiErrorEnum;
-import com.wanted.cqrs.common.response.ResponseUtils;
+import com.wanted.cqrs.common.utils.ResponseUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
