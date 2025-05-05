@@ -30,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public User searchUserByEmail(String email) {
-        return authRepository.searchUserByEmail(email).orElseGet(null);
+        return authRepository.findByEmail(email).orElseGet(null);
     }
 
     @Override

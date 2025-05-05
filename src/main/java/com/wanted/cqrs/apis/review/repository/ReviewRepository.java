@@ -1,7 +1,7 @@
 package com.wanted.cqrs.apis.review.repository;
 
-import org.apache.ibatis.annotations.Mapper;
+import com.wanted.cqrs.apis.review.domain.Review;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Mapper
-public interface ReviewRepository {
+public interface ReviewRepository extends JpaRepository<Review, Long> {
 }

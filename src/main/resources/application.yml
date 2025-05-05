@@ -42,10 +42,23 @@ spring:
     hikari:
       pool-name: Hikari
       maximum-pool-size: 4
+  jpa:
+    open-in-view: true
+    show-sql: true
+    hibernate:
+      #      ddl-auto: create
+      ddl-auto: none
+#      naming:
+#        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        highlight_sql: true
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
-mybatis:
-  configuration:
-    map-underscore-to-camel-case: true
-    jdbc-type-for-null: varchar
-  mapper-locations: classpath:/database/mappers/**/*Mapper.xml
-  type-aliases-package: com.wanted.cqrs.apis
+#mybatis:
+#  configuration:
+#    map-underscore-to-camel-case: true
+#    jdbc-type-for-null: varchar
+#  mapper-locations: classpath:/database/mappers/**/*Mapper.xml
+#  type-aliases-package: com.wanted.cqrs.apis

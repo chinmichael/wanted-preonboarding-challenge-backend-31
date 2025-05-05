@@ -3,28 +3,28 @@ package com.wanted.cqrs.apis.product.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
-@Table(name = "product_options")
+@Table(name = "product_option_groups")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductOption {
+public class ProductOptionGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
     private Long id;
 
     private String name;
-    private BigDecimal additionalPrice;
-    private String sku;
-    private Integer stock;
     private Integer displayOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id", referencedColumnName = "id")
-    private ProductOptionGroup group;
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
+    private Product product;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<ProductOption> options;
 }

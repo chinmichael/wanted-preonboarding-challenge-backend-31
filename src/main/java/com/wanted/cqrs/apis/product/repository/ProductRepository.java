@@ -1,7 +1,7 @@
 package com.wanted.cqrs.apis.product.repository;
 
-import org.apache.ibatis.annotations.Mapper;
+import com.wanted.cqrs.apis.product.domain.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Mapper
-public interface ProductRepository {
+public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom {
 }

@@ -1,21 +1,26 @@
 package com.wanted.cqrs.apis.auth.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.apache.ibatis.type.Alias;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Alias("User")
+@Builder
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     private long id;
+
     private String name;
+
+    @Column(unique = true)
     private String email;
     private String avatarUrl;
     private LocalDateTime createdAt;
