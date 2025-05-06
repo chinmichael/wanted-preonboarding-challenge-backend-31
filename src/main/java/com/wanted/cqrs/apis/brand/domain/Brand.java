@@ -26,6 +26,6 @@ public class Brand {
     private String logoUrl;
     private String website;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<Product> products;
 }

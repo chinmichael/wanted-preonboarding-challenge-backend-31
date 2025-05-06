@@ -29,6 +29,6 @@ public class Seller {
     private String contactPhone;
     private LocalDateTime createdAt;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<Product> products;
 }

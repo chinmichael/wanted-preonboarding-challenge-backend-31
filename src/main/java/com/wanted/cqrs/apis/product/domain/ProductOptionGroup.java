@@ -25,6 +25,6 @@ public class ProductOptionGroup {
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<ProductOption> options;
 }

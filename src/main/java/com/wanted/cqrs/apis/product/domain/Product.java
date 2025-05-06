@@ -38,10 +38,10 @@ public class Product {
     @JoinColumn(name = "brand_id", referencedColumnName = "id")
     private Brand brand;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<ProductImage> images;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<Review> reviews;
 
     @OneToOne(fetch = FetchType.LAZY)
