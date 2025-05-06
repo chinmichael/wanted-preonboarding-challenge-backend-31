@@ -1,4 +1,4 @@
-package com.wanted.cqrs.apis.product.domain;
+package com.wanted.cqrs.apis.category.domain;
 
 import jakarta.persistence.*;
 import lombok.*;

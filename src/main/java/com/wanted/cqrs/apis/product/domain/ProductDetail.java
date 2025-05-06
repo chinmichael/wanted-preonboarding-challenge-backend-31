@@ -22,7 +22,7 @@ public class ProductDetail {
     @Column(updatable = false)
     private Long id;
 
-    private BigDecimal weight;
+    private Double weight;
     private String materials;
     private String countryOfOrigin;
     private String warrantyInfo;

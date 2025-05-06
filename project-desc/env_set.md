@@ -26,8 +26,6 @@ services:
 컨테이너 상태는 `docker-compose ps`로 확인. `docker ps`와의 차이는 다음과 같이
 현재 워킹 디렉터리의 docker-compose로 구동되는 컨테이너만 확인한다는 점이다.
 
-![img.png](img.png)
-
 ```commandline
 docker-compose up -d
 
