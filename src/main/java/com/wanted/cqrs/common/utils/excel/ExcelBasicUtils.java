@@ -22,12 +22,15 @@ import java.util.*;
 
 @Slf4j
 @UtilityClass
-public class ExcelUtils {
+public class ExcelBasicUtils {
+
+    public static final String DEFAULT_SHEET_NAME = "Sheet1";
 
     // todo : 복잡한 설정 가져오는 케이스도 추가 작업 필요
 
+
     /**
-     * vo -> excel 생성
+     * vo -> excel file 생성 (기본정보로 1 sheet로 생성시)
      * @param dataList
      * @param clazz
      * @return
@@ -37,38 +40,17 @@ public class ExcelUtils {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public static <T> ByteArrayOutputStream createExcelFile(Collection<T> dataList, Class<T> clazz) throws IOException, IllegalArgumentException, InvocationTargetException, IllegalAccessException {
+    public static <T> ByteArrayOutputStream createSimpleOneSheetExcelFile(Collection<T> dataList, Class<T> clazz) throws IOException, IllegalArgumentException, IllegalAccessException {
         if(dataList == null || dataList.isEmpty()) throw new IllegalArgumentException("데이터 없음");
 
         try(XSSFWorkbook workbook = new XSSFWorkbook()) {
-            // sheet 설정 조회
+            // sheet 설정
             ExcelBasic.ExcelSheet sheetAnnotation = clazz.getAnnotation(ExcelBasic.ExcelSheet.class);
-            String sheetName = sheetAnnotation != null ? sheetAnnotation.name() : "Sheet1";
+            String sheetName = sheetAnnotation != null ? sheetAnnotation.name() : DEFAULT_SHEET_NAME;
             XSSFSheet sheet = workbook.createSheet(sheetName);
 
-            int startColIndex = sheetAnnotation == null || sheetAnnotation.startColIndex() < 0 ? 0 : sheetAnnotation.startColIndex();
-            int headerRowIndex = sheetAnnotation == null || sheetAnnotation.headerRowIndex() < 0 ? 0 : sheetAnnotation.headerRowIndex();
-
-            // 필드 정보 추출
-            List<ExcelFieldInfo> sortedFieldInfos = ExcelUtils.getSortedExcelFields(clazz);
-
-            // header and data style
-            CellStyle headerStyle = ExcelUtils.createDefaultHeaderStyle(workbook);
-            CellStyle dataStyle = ExcelUtils.createDefaultDataStyle(workbook);
-
-            // 헤더 생성 & 데이터 생성
-            ExcelUtils.createHeader(sheet, sortedFieldInfos, startColIndex, headerRowIndex, headerStyle);
-
-            int startDataRowIndex = sheetAnnotation == null ? sheet.getLastRowNum() : sheetAnnotation.headerRowIndex();
-            ExcelUtils.createDataRows(sheet, dataList, sortedFieldInfos, startColIndex, startDataRowIndex, dataStyle);
-
-            // 컬럼 너비 조정
-            int index = startColIndex;
-            for(final ExcelFieldInfo fieldInfo : sortedFieldInfos) {
-                if (fieldInfo.excelColumn.width() > 0) sheet.setColumnWidth(index, fieldInfo.excelColumn.width());
-                else sheet.autoSizeColumn(index);
-                index++;
-            }
+            // excel 내용 생성
+            ExcelBasicUtils.writeExcelDataContents(workbook, sheet, dataList, clazz);
 
             // stream 반환
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -78,9 +60,48 @@ public class ExcelUtils {
     }
 
     /**
+     * vo -> excel 내용 생성 (외부에서 workbook, sheet 설정 및 서식 적용을 하고 따로 파일 처리 등을 할 때 사용)
+     * @param workbook
+     * @param sheet
+     * @param dataList
+     * @param clazz
+     * @param <T>
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     */
+    public static <T> void writeExcelDataContents(Workbook workbook, Sheet sheet, Collection<T> dataList, Class<T> clazz) throws IllegalArgumentException, IllegalAccessException {
+        // sheet 적용 정보
+        ExcelBasic.ExcelSheet sheetAnnotation = clazz.getAnnotation(ExcelBasic.ExcelSheet.class);
+        int startColIndex = sheetAnnotation == null || sheetAnnotation.startColIndex() < 0 ? 0 : sheetAnnotation.startColIndex();
+        int headerRowIndex = sheetAnnotation == null || sheetAnnotation.headerRowIndex() < 0 ? 0 : sheetAnnotation.headerRowIndex();
+
+        // 필드 정보 추출
+        List<ExcelFieldInfo> sortedFieldInfos = ExcelBasicUtils.getSortedExcelFields(clazz);
+
+        // header and data style
+        CellStyle headerStyle = ExcelBasicUtils.createDefaultHeaderStyle(workbook);
+        CellStyle dataStyle = ExcelBasicUtils.createDefaultDataStyle(workbook);
+
+        // 헤더 생성 & 데이터 생성
+        ExcelBasicUtils.createHeader(sheet, sortedFieldInfos, startColIndex, headerRowIndex, headerStyle);
+
+        int startDataRowIndex = sheetAnnotation == null ? sheet.getLastRowNum() : sheetAnnotation.headerRowIndex();
+        ExcelBasicUtils.createDataRows(sheet, dataList, sortedFieldInfos, startColIndex, startDataRowIndex, dataStyle);
+
+        // 컬럼 너비 조정
+        int index = startColIndex;
+        for(final ExcelFieldInfo fieldInfo : sortedFieldInfos) {
+            if (fieldInfo.excelColumn.width() > 0) sheet.setColumnWidth(index, fieldInfo.excelColumn.width());
+            else sheet.autoSizeColumn(index);
+            index++;
+        }
+    }
+
+    /**
      * excel -> vo 추출
      * @param inputStream
      * @param clazz
+     * @param sheetName
      * @return
      * @param <T>
      * @throws IOException
@@ -88,19 +109,20 @@ public class ExcelUtils {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public static <T> List<T> parseExcelFile(InputStream inputStream, Class<T> clazz)
+    public static <T> List<T> parseExcelFile(InputStream inputStream, Class<T> clazz, String sheetName)
             throws IOException, IllegalArgumentException, IllegalAccessException {
         List<T> result = new ArrayList<>();
 
         try (XSSFWorkbook workbook = new XSSFWorkbook(inputStream)) {
-            XSSFSheet sheet = workbook.getSheetAt(0);
+            // sheet 가져오기
+            ExcelBasic.ExcelSheet sheetAnnotation = clazz.getAnnotation(ExcelBasic.ExcelSheet.class);
+            XSSFSheet sheet = workbook.getSheet(
+                    StringUtils.isNotBlank(sheetName) ? sheetName : sheetAnnotation != null ? sheetAnnotation.name() : DEFAULT_SHEET_NAME);
 
-            // sheet 설정 조회 및 데이터 설정 시작 범위 조회
-            ExcelBasic.ExcelSheet sheetAnno = clazz.getAnnotation(ExcelBasic.ExcelSheet.class);
-            int dataStartRowIndex = sheetAnno != null ? sheetAnno.dataStartRowIndex() : 1;
+            int dataStartRowIndex = sheetAnnotation != null ? sheetAnnotation.dataStartRowIndex() : 1;
 
             // 필드 정보 추출
-            List<ExcelFieldInfo> sortedFieldInfos = ExcelUtils.getSortedExcelFields(clazz);
+            List<ExcelFieldInfo> sortedFieldInfos = ExcelBasicUtils.getSortedExcelFields(clazz);
 
             // 데이터 행 처리
             for (int rowIndex = dataStartRowIndex; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
@@ -117,11 +139,11 @@ public class ExcelUtils {
                     throw new IllegalAccessException("인스턴스 생성 에러");
                 }
 
-                int colIndex = sheetAnno == null || sheetAnno.startColIndex() < 0 ? 0 : sheetAnno.startColIndex();
+                int colIndex = sheetAnnotation == null || sheetAnnotation.startColIndex() < 0 ? 0 : sheetAnnotation.startColIndex();
                 for(ExcelFieldInfo fieldInfo : sortedFieldInfos) {
                     if(fieldInfo.setter == null) continue;
 
-                    Object value = ExcelUtils.getCellTypeValue(row.getCell(colIndex), fieldInfo);
+                    Object value = ExcelBasicUtils.getCellTypeValue(row.getCell(colIndex), fieldInfo);
                     if(value == null && fieldInfo.excelColumn.required()) {
                         throw new IllegalArgumentException(
                                 String.format("행 %d, 컬럼 %s: 필수 값이 누락되었습니다.", rowIndex + 1, fieldInfo.excelColumn.headerNm()));
@@ -144,65 +166,11 @@ public class ExcelUtils {
     }
 
     /**
-     * excel column 필드 정보 추출
-     * @param clazz
-     * @return
-     * @param <T>
-     */
-    private static <T> List<ExcelFieldInfo> getSortedExcelFields(Class<T> clazz) {
-
-        return Arrays.stream(clazz.getDeclaredFields())
-                .filter(field -> field.isAnnotationPresent(ExcelBasic.ExcelColumn.class))
-                .sorted(Comparator.comparingInt(field -> field.getAnnotation(ExcelBasic.ExcelColumn.class).order()))
-                .map(field -> {
-                    ExcelBasic.ExcelColumn excelColumnAnnotation = field.getAnnotation(ExcelBasic.ExcelColumn.class);
-
-                    /* fortify 정책상 이름으로 getter, setter를 직접 가져오는 방식으로 처리 */
-
-                    // getter 조회 vo -> excel에서 사용
-                    String fieldName = field.getName();
-                    String getterName = "get" + CommonUtils.capitalizeFirstLetter(fieldName);
-
-                    // boolean 필드의 경우 is~ 로 생성할 수 있음
-                    String booleanGetterName = null;
-                    if(field.getType() == Boolean.class || field.getType() == boolean.class) {
-                        booleanGetterName = "is" + CommonUtils.capitalizeFirstLetter(fieldName);
-                    }
-
-                    Method getter = null;
-                    try {
-                        getter = clazz.getMethod(getterName);
-                    } catch (NoSuchMethodException e) {
-                        if (booleanGetterName != null) {
-                            try {
-                                getter = clazz.getMethod(booleanGetterName);
-                            } catch (NoSuchMethodException ignored) {
-                                log.error("getter field 찾을 수 없음 : {}", fieldName);
-                                log.error(e.getMessage());
-                            }
-                        }
-                    }
-
-                    // setter 조회 excel -> vo 에서 사용
-                    String setterName = "set" + CommonUtils.capitalizeFirstLetter(fieldName);
-                    Method setter = null;
-                    try {
-                        setter = clazz.getMethod(setterName, field.getType());
-                    } catch (NoSuchMethodException e) {
-                        log.error("setter field 찾을 수 없음 : {}", fieldName);
-                        log.error(e.getMessage());
-                    }
-
-                    return new ExcelFieldInfo(field, excelColumnAnnotation, getter, setter);
-                }).toList();
-    }
-
-    /**
      * 기본 header 스타일 생성
      * @param workbook
      * @return
      */
-    private static CellStyle createDefaultHeaderStyle(XSSFWorkbook workbook) {
+    private static CellStyle createDefaultHeaderStyle(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();
 
         // 폰트
@@ -233,7 +201,7 @@ public class ExcelUtils {
      * @param workbook
      * @return
      */
-    private CellStyle createDefaultDataStyle(XSSFWorkbook workbook) {
+    private CellStyle createDefaultDataStyle(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();
 
         // 폰트
@@ -312,7 +280,7 @@ public class ExcelUtils {
                     continue;
                 }
 
-                ExcelUtils.setCellTypeValue(cell, value, fieldInfo);
+                ExcelBasicUtils.setCellTypeValue(cell, value, fieldInfo);
             }
         }
     }
@@ -349,7 +317,7 @@ public class ExcelUtils {
     private static Object getCellTypeValue(Cell cell, ExcelFieldInfo fieldInfo) {
         if(cell == null) {
             String defaultValue = fieldInfo.excelColumn.defaultValue();
-            return defaultValue.isEmpty() ? null : ExcelUtils.convertStringValue(defaultValue, fieldInfo);
+            return defaultValue.isEmpty() ? null : ExcelBasicUtils.convertStringValue(defaultValue, fieldInfo);
         }
 
         switch (cell.getCellType()) {
@@ -416,21 +384,56 @@ public class ExcelUtils {
     }
 
     /**
-     * excel 설정 필드 정보
+     * excel column 필드 정보 추출
+     * @param clazz
+     * @return
+     * @param <T>
      */
-    private static class ExcelFieldInfo {
-        final Field field;
-        final ExcelBasic.ExcelColumn excelColumn;
+    static <T> List<ExcelFieldInfo> getSortedExcelFields(Class<T> clazz) {
 
-        // fortify setAccessible 사용 불가, PropertyDescriptor 사용시 BeanInfo에 보안 경고 가능성을 고려하여 사용 제외
-        final Method getter; // vo -> excel 에서 사용
-        final Method setter; // excel -> vo 에서 사용
+        return Arrays.stream(clazz.getDeclaredFields())
+                .filter(field -> field.isAnnotationPresent(ExcelBasic.ExcelColumn.class))
+                .sorted(Comparator.comparingInt(field -> field.getAnnotation(ExcelBasic.ExcelColumn.class).order()))
+                .map(field -> {
+                    ExcelBasic.ExcelColumn excelColumnAnnotation = field.getAnnotation(ExcelBasic.ExcelColumn.class);
 
-        ExcelFieldInfo(Field field, ExcelBasic.ExcelColumn excelColumn, Method getter, Method setter) {
-            this.field = field;
-            this.excelColumn = excelColumn;
-            this.getter = getter;
-            this.setter = setter;
-        }
+                    /* fortify 정책상 이름으로 getter, setter를 직접 가져오는 방식으로 처리 */
+
+                    // getter 조회 vo -> excel에서 사용
+                    String fieldName = field.getName();
+                    String getterName = "get" + CommonUtils.capitalizeFirstLetter(fieldName);
+
+                    // boolean 필드의 경우 is~ 로 생성할 수 있음
+                    String booleanGetterName = null;
+                    if(field.getType() == Boolean.class || field.getType() == boolean.class) {
+                        booleanGetterName = "is" + CommonUtils.capitalizeFirstLetter(fieldName);
+                    }
+
+                    Method getter = null;
+                    try {
+                        getter = clazz.getMethod(getterName);
+                    } catch (NoSuchMethodException e) {
+                        if (booleanGetterName != null) {
+                            try {
+                                getter = clazz.getMethod(booleanGetterName);
+                            } catch (NoSuchMethodException ignored) {
+                                log.error("getter field 찾을 수 없음 : {}", fieldName);
+                                log.error(e.getMessage());
+                            }
+                        }
+                    }
+
+                    // setter 조회 excel -> vo 에서 사용
+                    String setterName = "set" + CommonUtils.capitalizeFirstLetter(fieldName);
+                    Method setter = null;
+                    try {
+                        setter = clazz.getMethod(setterName, field.getType());
+                    } catch (NoSuchMethodException e) {
+                        log.error("setter field 찾을 수 없음 : {}", fieldName);
+                        log.error(e.getMessage());
+                    }
+
+                    return new ExcelFieldInfo(field, excelColumnAnnotation, getter, setter);
+                }).toList();
     }
 }
